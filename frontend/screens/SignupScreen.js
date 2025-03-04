@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet } from "react-native";
 import { useAuth } from "../hooks/useAuth";
-import { useNavigation } from "@react-navigation/native";
 
-const LoginPage = () => {
-  const { signIn } = useAuth();
-  const navigation = useNavigation();
+const SignUpScreen = () => {
+  const { signUp } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = async () => {
+  const handleSignUp = async () => {
     try {
-      await signIn(email, password);
-      navigation.navigate("Home");
+      await signUp(email, password);
+      // Navigate to the next screen or show success message
     } catch (err) {
       setError(err.message);
     }
@@ -21,7 +19,7 @@ const LoginPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Sign Up</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -37,11 +35,7 @@ const LoginPage = () => {
         secureTextEntry
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button title="Login" onPress={handleLogin} />
-      <Button
-        title="Go to Sign Up"
-        onPress={() => navigation.navigate("Sign Up")}
-      />
+      <Button title="Sign Up" onPress={handleSignUp} />
     </View>
   );
 };
@@ -74,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginPage;
+export default SignUpScreen;
