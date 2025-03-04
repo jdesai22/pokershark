@@ -36,6 +36,10 @@ const StatsScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <Image
+          source={{ uri: '' }} // Replace with actual profile image URL
+          style={styles.profileImage}
+        />
         <Text style={styles.title}>PokerShark Analytics</Text>
         <Image
           source={{ uri: 'https://asiaiplaw.com/storage/media/image/article/7eb532aef980c36170c0b4426f082b87/banner/939314105ce8701e67489642ef4d49e8/conversions/Picture1-extra_large.jpg' }} // Replace with actual profile image URL
@@ -87,6 +91,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
+    paddingTop: 20,
     marginBottom: 20,
   },
   title: {
@@ -94,8 +99,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   profileImage: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     borderRadius: 20,
   },
   statsContainer: {

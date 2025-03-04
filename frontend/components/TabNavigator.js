@@ -14,7 +14,7 @@ const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer style={{margin: 50}}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -34,8 +34,10 @@ const TabNavigator = () => {
           },
           tabBarActiveTintColor: '#007AFF',
           tabBarInactiveTintColor: '#666',
-          tabBarStyle: { height: 60, paddingBottom: 10, marginBottom: 20 },
+          tabBarStyle: { height: 60, paddingBottom: 10 },
+          headerShown: false,
         })}
+        
       >
         <Tab.Screen name="Stats" component={StatsScreen} />
         <Tab.Screen name="Search" component={MatchHistory} />
