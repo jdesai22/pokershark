@@ -18,7 +18,7 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => {
   const { isAuthenticated } = useAuth();
   return (
-    <NavigationContainer>
+    <NavigationContainer style={{margin: 50}}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -42,10 +42,12 @@ const TabNavigator = () => {
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: "#007AFF",
-          tabBarInactiveTintColor: "#666",
-          tabBarStyle: { height: 60, paddingBottom: 10, marginBottom: 20 },
+          tabBarActiveTintColor: '#007AFF',
+          tabBarInactiveTintColor: '#666',
+          tabBarStyle: { height: 60, paddingBottom: 10 },
+          headerShown: false,
         })}
+        
       >
         {isAuthenticated ? (
           <>
