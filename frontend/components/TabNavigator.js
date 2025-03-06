@@ -9,6 +9,7 @@ import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import { useAuth } from "../hooks/useAuth";
 import ProfileScreen from "../screens/ProfileScreen";
+import proximitySensorScreen from "../screens/proximitySensorScreen";
 const EmptyScreen = () => {
   return null;
 };
@@ -38,7 +39,8 @@ const TabNavigator = () => {
               iconName = "person-add";
             } else if (route.name === "Profile") {
               iconName = "person";
-            }
+            } else if (route.name === "ProximitySensor")
+              iconName = "proximity";
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -54,6 +56,7 @@ const TabNavigator = () => {
             <Tab.Screen name="Refresh" component={EmptyScreen} />
             <Tab.Screen name="Wallet" component={EmptyScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
+            <Tab.Screen name="ProximitySensor" component={proximitySensorScreen} />
           </>
         ) : (
           <>
