@@ -9,16 +9,18 @@ import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import { useAuth } from "../hooks/useAuth";
 import ProfileScreen from "../screens/ProfileScreen";
+import MatchDetails from "../screens/MatchDetails";
+import { createStackNavigator } from "@react-navigation/stack";
 const EmptyScreen = () => {
   return null;
 };
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const TabNavigator = () => {
   const { isAuthenticated } = useAuth();
   return (
-    <NavigationContainer style={{margin: 50}}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -64,8 +66,24 @@ const TabNavigator = () => {
           </>
         )}
       </Tab.Navigator>
+  );
+};
+
+// export default TabNavigator; leaving this here in case the AppNavigator does not work
+
+const AppNavigator = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="MainTabs"
+          component={TabNavigator}
+          options={{ headerShown: false }} // Hide tab navigator header
+        />
+        <Stack.Screen name="Match Details" component={MatchDetails} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-export default TabNavigator;
+export default AppNavigator;

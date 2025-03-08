@@ -1,8 +1,12 @@
 import React from 'react';
 import { TouchableOpacity, FlatList, View, Text, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 const MatchItem = ({name, date}) => {
-    return (
+  const navigation = useNavigation();  
+  
+  return (
       <View style={styles.matchItem}>
         <Text style={styles.matchInfo}>
           <Text style={styles.matchName}>
@@ -10,7 +14,10 @@ const MatchItem = ({name, date}) => {
            </Text>
            {date}
         </Text>
-        <TouchableOpacity style={styles.detailsButton}>
+      <TouchableOpacity
+        style={styles.detailsButton}
+        onPress={() => navigation.navigate('Match Details', { name, date })}
+      >
           <Text style={styles.buttonText}>Details</Text>
         </TouchableOpacity>
       </View>
