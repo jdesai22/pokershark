@@ -11,6 +11,8 @@ import { useAuth } from "../hooks/useAuth";
 import ProfileScreen from "../screens/ProfileScreen";
 import MatchDetails from "../screens/MatchDetails";
 import { createStackNavigator } from "@react-navigation/stack";
+import CameraScreen from "../screens/CameraScreen";
+import LightSensor from "../screens/LightSensor";
 const EmptyScreen = () => {
   return null;
 };
@@ -30,7 +32,7 @@ const TabNavigator = () => {
               iconName = "home";
             } else if (route.name === "Search") {
               iconName = "search";
-            } else if (route.name === "Refresh") {
+            } else if (route.name === "LightSensor") {
               iconName = "refresh";
             } else if (route.name === "Wallet") {
               iconName = "wallet";
@@ -40,7 +42,8 @@ const TabNavigator = () => {
               iconName = "person-add";
             } else if (route.name === "Profile") {
               iconName = "person";
-            }
+            } else if (route.name === "Camera")
+              iconName = "camera";
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -55,9 +58,10 @@ const TabNavigator = () => {
           <>
             <Tab.Screen name="Stats" component={StatsScreen} />
             <Tab.Screen name="Search" component={MatchHistory} />
-            <Tab.Screen name="Refresh" component={EmptyScreen} />
+            <Tab.Screen name="LightSensor" component={LightSensor} />
             <Tab.Screen name="Wallet" component={EmptyScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
+            <Tab.Screen name="Camera" component={CameraScreen} />
           </>
         ) : (
           <>
