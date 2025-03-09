@@ -1,20 +1,50 @@
 import React from 'react';
-import { FlatList, View, Text, StyleSheet, Image } from 'react-native';
+import { TouchableOpacity, FlatList, View, Text, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+
+const MatchItem = ({name, date}) => {
+  const navigation = useNavigation();  
+  
+  return (
+      <View style={styles.matchItem}>
+        <Text style={styles.matchInfo}>
+          <Text style={styles.matchName}>
+            {name}    
+           </Text>
+           {date}
+        </Text>
+      <TouchableOpacity
+        style={styles.detailsButton}
+        onPress={() => navigation.navigate('Match Details', { name, date })}
+      >
+          <Text style={styles.buttonText}>Details</Text>
+        </TouchableOpacity>
+      </View>
+    );
+}
 
 const MatchHistory = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Match History</Text>
-        <Image
-          source={{ uri: 'https://asiaiplaw.com/storage/media/image/article/7eb532aef980c36170c0b4426f082b87/banner/939314105ce8701e67489642ef4d49e8/conversions/Picture1-extra_large.jpg' }} // Replace with actual profile image URL
-          style={styles.profileImage}
-        />
       </View>
       <View>
-        <FlatList style={styles.historyContainer}>
-        </FlatList>
+        <FlatList
+          data={[
+            { name: "Monday Night Poker ", date: "10/22/24", id: '1' },
+            { name: "Sunday Afternoon Poker ", date: "9/22/24", id: '2' },
+            { name: "Tuesday Night Poker ", date: "8/22/24", id: '3' },
+            { name: "Friday Night Poker ", date: "7/22/24", id: '4' }
+          ]}
+          renderItem={({item}) => <MatchItem name={item.name} date={item.date} />}
+          keyExtractor={item => item.id}
+        />
       </View>
+      <TouchableOpacity style={styles.newPostButton}>
+        <Text style={styles.buttonText}>New Post</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -27,9 +57,10 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
+    paddingTop: 20,
     marginBottom: 20,
   },
   title: {
@@ -72,6 +103,42 @@ const styles = StyleSheet.create({
   chart: {
     marginVertical: 8,
     borderRadius: 16,
+  },
+  matchItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  matchName: {
+    fontWeight: 'bold',
+    marginLeft: 20,
+  },
+  matchInfo: {
+    color: '#666',
+    fontSize: 14,
+  },
+  detailsButton: {
+    backgroundColor: 'black',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  newPostButton: {
+    backgroundColor: 'black',
+    padding: 15,
+    marginHorizontal: 15,
+    alignItems: 'center',
+    borderRadius: 10,
+    justifySelf: 'end',
+    marginTop: 'auto',
+    marginBottom: 20,
   },
 });
 
