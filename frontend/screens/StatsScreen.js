@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import { Card, Title } from "react-native-paper";
 import { LineChart } from "react-native-chart-kit";
 import { useAuth } from "@/hooks/useAuth";
+import {SafeAreaView} from 'react-native';
 import {
   getPlayerStats,
   getPlayerMatchHistory,
@@ -95,7 +96,7 @@ const StatsScreen = () => {
   }, [chartData]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Image
           source={{ uri: "" }} // Replace with actual profile image URL
@@ -143,7 +144,7 @@ const StatsScreen = () => {
             )}
         </Card>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
