@@ -58,7 +58,7 @@ const TabNavigator = () => {
           <>
             <Tab.Screen name="Stats" component={StatsScreen} />
             <Tab.Screen name="Search" component={MatchHistory} />
-            <Tab.Screen name="LightSensor" component={LightSensor} />
+            <Tab.Screen name="LightSensor" component={EmptyScreen} />
             <Tab.Screen name="Wallet" component={EmptyScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
             <Tab.Screen name="Camera" component={CameraScreen} />

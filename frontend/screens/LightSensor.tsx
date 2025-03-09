@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import proximity from 'rn-proximity-sensor';
-import type { SubscriptionRef } from 'rn-proximity-sensor';
+//import proximity from 'rn-proximity-sensor';
+//import type { SubscriptionRef } from 'rn-proximity-sensor';
 import Shimmer from './Shimmer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
