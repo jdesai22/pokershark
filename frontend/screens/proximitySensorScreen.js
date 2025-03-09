@@ -132,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StatsScreen;
+export default proximitySensorScreen;
