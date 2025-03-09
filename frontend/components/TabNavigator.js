@@ -9,6 +9,7 @@ import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import { useAuth } from "../hooks/useAuth";
 import ProfileScreen from "../screens/ProfileScreen";
+import SocialScreen from "@/screens/SocialScreen";
 const EmptyScreen = () => {
   return null;
 };
@@ -28,16 +29,14 @@ const TabNavigator = () => {
               iconName = "home";
             } else if (route.name === "Search") {
               iconName = "search";
-            } else if (route.name === "Refresh") {
-              iconName = "refresh";
-            } else if (route.name === "Wallet") {
-              iconName = "wallet";
             } else if (route.name === "Login") {
               iconName = "log-in";
             } else if (route.name === "Signup") {
               iconName = "person-add";
             } else if (route.name === "Profile") {
               iconName = "person";
+            } else if (route.name === "Social") {
+              iconName = "chatbubbles";
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -53,8 +52,7 @@ const TabNavigator = () => {
           <>
             <Tab.Screen name="Stats" component={StatsScreen} />
             <Tab.Screen name="Search" component={MatchHistory} />
-            <Tab.Screen name="Refresh" component={EmptyScreen} />
-            <Tab.Screen name="Wallet" component={EmptyScreen} />
+            <Tab.Screen name="Social" component={SocialScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
           </>
         ) : (
