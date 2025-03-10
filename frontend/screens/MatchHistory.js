@@ -1,11 +1,6 @@
-import React from 'react';
-<<<<<<< HEAD
-import { TouchableOpacity, FlatList, View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
-
-=======
-import { TouchableOpacity, FlatList, View, Text, StyleSheet, Image, SafeAreaView } from 'react-native';
->>>>>>> clean-css
+import { TextInput, Button, Modal, Animated, TouchableOpacity, FlatList, View, Text, StyleSheet, Image, SafeAreaView } from 'react-native';
 
 const MatchItem = ({name, date}) => {
   const navigation = useNavigation();  
@@ -29,8 +24,87 @@ const MatchItem = ({name, date}) => {
 }
 
 const MatchHistory = () => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current; // Initial value for slide-up animation
+
+  // Function to show the modal with animation
+  const showModal = () => {
+    setModalVisible(true);
+    Animated.timing(slideAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  // Function to hide the modal with animation
+  const hideModal = () => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setModalVisible(false));
+  };
+
+  // Translate the modal based on the animated value
+  const modalTranslateY = slideAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [500, 0], // Slide up from bottom
+  });
   return (
     <SafeAreaView style={styles.container}>
+    <Modal
+        visible={isModalVisible}
+        transparent={true}
+        animationType="none" // Disable default modal animation
+        onRequestClose={hideModal}
+      >
+        <View style={styles.modalOverlay}>
+          <Animated.View
+            style={[
+              styles.modalContent,
+              { transform: [{ translateY: modalTranslateY }] },
+            ]}
+          >
+            {/* "X" button to close the modal */}
+            <TouchableOpacity style={styles.closeButton} onPress={hideModal}>
+              <Text style={styles.closeButtonText}>X</Text>
+            </TouchableOpacity>
+
+            {/* Input fields */}
+    <Text>Game Title</Text>
+            <TextInput
+              style={styles.input}
+            />
+    <Text>Date</Text>
+            <TextInput
+              style={styles.input}
+            />
+    <Text>Buy-in</Text>
+            <TextInput
+              style={styles.input}
+            />
+    <Text>Final Amount</Text>
+            <TextInput
+              style={styles.input}
+            />
+    <Text>Number of Hands Folded</Text>
+            <TextInput
+              style={styles.input}
+            />
+    <Text>Number of Hands Played</Text>
+            <TextInput
+              style={styles.input}
+            />
+    <Text>Number of VPIP Hands</Text>
+            <TextInput
+              style={styles.input}
+            />
+            {/* Submit button */}
+            <Button title="Submit" onPress={() => hideModal()} />
+          </Animated.View>
+        </View>
+      </Modal>
       <View style={styles.header}>
         <Text style={styles.title}>Match History</Text>
       </View>
@@ -46,7 +120,7 @@ const MatchHistory = () => {
           keyExtractor={item => item.id}
         />
       </View>
-      <TouchableOpacity style={styles.newPostButton}>
+      <TouchableOpacity onPress={showModal} style={styles.newPostButton}>
         <Text style={styles.buttonText}>New Post</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -88,26 +162,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 10,
   },
-  metrics: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-  },
-  metric: {
-    alignItems: 'center',
-  },
-  metricLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-  metricValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  chart: {
-    marginVertical: 8,
-    borderRadius: 16,
-  },
   matchItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -143,6 +197,32 @@ const styles = StyleSheet.create({
     justifySelf: 'end',
     marginTop: 'auto',
     marginBottom: 20,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    height: '70%',
+  },
+  closeButton: {
+    alignSelf: 'flex-end',
+  },
+  closeButtonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
   },
 });
 
