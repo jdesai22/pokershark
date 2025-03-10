@@ -55,6 +55,10 @@ async function createNewPlayerStats(uuid) {
       fold_ratio: 0,
       vpip: 0,
       win_loss_ratio: 0,
+      folded: 0,
+      played: 0,
+      won: 0,
+      vpip_total: 0,
     });
   } catch (error) {
     console.error("Error creating player stats:", error);
@@ -75,9 +79,87 @@ async function createNewPlayerMatchHistory(uuid) {
   }
 }
 
+/**
+ * create a function to add a new match to the player-match-history database
+ * input data: uuid, match_name (string), match_date (date), buy_in (number), final_amount (number), hands_played (number), hands_won (number), hands_won_details (array of strings)
+ * output data: none
+ */
+
+async function addNewMatchToPlayerMatchHistory(
+  uuid,
+  match_name,
+  match_date,
+  buy_in,
+  final_amount,
+  hands_played,
+  hands_won,
+  hands_folded,
+  vpip_hands,
+  hands_won_details
+) {
+  const docRef = doc(firestore, "player-match-history", uuid);
+  // add match_name to the matches_played array stored within the document with id uuid
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    console.log("data", data);
+    data.match_stats[match_name] = {
+      date: match_date,
+      buy_in: buy_in,
+      final_amount: final_amount,
+      hands_played: hands_played,
+      hands_won: hands_won,
+      hands_folded: hands_folded,
+      vpip_hands: vpip_hands,
+      hands_won_details: hands_won_details,
+    };
+    data.matches_played.push(match_name);
+    await setDoc(docRef, data);
+
+    await updatePlayerStats(
+      uuid,
+      hands_folded,
+      hands_played,
+      hands_won,
+      vpip_hands,
+      final_amount,
+      buy_in
+    );
+  }
+}
+
+async function updatePlayerStats(
+  uuid,
+  hands_folded,
+  hands_played,
+  hands_won,
+  vpip_hands,
+  final_amount,
+  buy_in
+) {
+  console.log("Updating player stats for:", uuid);
+  const docRef = doc(firestore, "player-overall-stats", uuid);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    console.log("data", data);
+    data.folded += hands_folded;
+    data.earnings.push(final_amount - buy_in);
+    data.played += hands_played;
+    data.won += hands_won;
+    data.vpip_total += vpip_hands;
+    data.fold_ratio = Math.round((data.folded / data.played) * 100) / 100;
+    data.vpip = Math.round((data.vpip_total / data.played) * 100) / 100;
+    data.win_loss_ratio = Math.round((data.won / data.played) * 100) / 100;
+    await setDoc(docRef, data);
+  }
+}
+
 export {
   getPlayerStats,
   getPlayerMatchHistory,
   createNewPlayerStats,
   createNewPlayerMatchHistory,
+  addNewMatchToPlayerMatchHistory,
+  updatePlayerStats,
 };
