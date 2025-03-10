@@ -9,16 +9,20 @@ import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import { useAuth } from "../hooks/useAuth";
 import ProfileScreen from "../screens/ProfileScreen";
+import MatchDetails from "../screens/MatchDetails";
+import { createStackNavigator } from "@react-navigation/stack";
+import CameraScreen from "../screens/CameraScreen";
+import LightSensor from "../screens/LightSensor";
 const EmptyScreen = () => {
   return null;
 };
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const TabNavigator = () => {
   const { isAuthenticated } = useAuth();
   return (
-    <NavigationContainer style={{margin: 50}}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -28,7 +32,7 @@ const TabNavigator = () => {
               iconName = "home";
             } else if (route.name === "Search") {
               iconName = "search";
-            } else if (route.name === "Refresh") {
+            } else if (route.name === "LightSensor") {
               iconName = "refresh";
             } else if (route.name === "Wallet") {
               iconName = "wallet";
@@ -38,7 +42,8 @@ const TabNavigator = () => {
               iconName = "person-add";
             } else if (route.name === "Profile") {
               iconName = "person";
-            }
+            } else if (route.name === "Camera")
+              iconName = "camera";
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -53,9 +58,10 @@ const TabNavigator = () => {
           <>
             <Tab.Screen name="Stats" component={StatsScreen} />
             <Tab.Screen name="Search" component={MatchHistory} />
-            <Tab.Screen name="Refresh" component={EmptyScreen} />
+            <Tab.Screen name="LightSensor" component={EmptyScreen} />
             <Tab.Screen name="Wallet" component={EmptyScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
+            <Tab.Screen name="Camera" component={CameraScreen} />
           </>
         ) : (
           <>
@@ -64,8 +70,24 @@ const TabNavigator = () => {
           </>
         )}
       </Tab.Navigator>
+  );
+};
+
+// export default TabNavigator; leaving this here in case the AppNavigator does not work
+
+const AppNavigator = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="MainTabs"
+          component={TabNavigator}
+          options={{ headerShown: false }} // Hide tab navigator header
+        />
+        <Stack.Screen name="Match Details" component={MatchDetails} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-export default TabNavigator;
+export default AppNavigator;

@@ -1,8 +1,16 @@
 import React from 'react';
+<<<<<<< HEAD
 import { TouchableOpacity, FlatList, View, Text, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+=======
+import { TouchableOpacity, FlatList, View, Text, StyleSheet, Image, SafeAreaView } from 'react-native';
+>>>>>>> clean-css
 
 const MatchItem = ({name, date}) => {
-    return (
+  const navigation = useNavigation();  
+  
+  return (
       <View style={styles.matchItem}>
         <Text style={styles.matchInfo}>
           <Text style={styles.matchName}>
@@ -10,7 +18,10 @@ const MatchItem = ({name, date}) => {
            </Text>
            {date}
         </Text>
-        <TouchableOpacity style={styles.detailsButton}>
+      <TouchableOpacity
+        style={styles.detailsButton}
+        onPress={() => navigation.navigate('Match Details', { name, date })}
+      >
           <Text style={styles.buttonText}>Details</Text>
         </TouchableOpacity>
       </View>
@@ -19,7 +30,7 @@ const MatchItem = ({name, date}) => {
 
 const MatchHistory = () => {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Match History</Text>
       </View>
@@ -38,7 +49,7 @@ const MatchHistory = () => {
       <TouchableOpacity style={styles.newPostButton}>
         <Text style={styles.buttonText}>New Post</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
