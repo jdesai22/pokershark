@@ -14,13 +14,16 @@ const SignUpScreen = () => {
 
   const handleSignUp = async () => {
     try {
-      await signUp(email, password);
-      // Navigate to the next screen or show success message
-      // after signup, create new player stats and match history, make sure to get the uuid from the user
-      const uuid = user.uid;
-      console.log("UUID:", uuid);
-      await createNewPlayerStats(uuid);
-      await createNewPlayerMatchHistory(uuid);
+      // console.log("Signing up with email:", email, "and password:", password);
+      signUp(email, password).then((user) => {
+        // Navigate to the next screen or show success message
+        // after signup, create new player stats and match history, make sure to get the uuid from the user
+        // console.log("User:", user.user.uid);
+        const uuid = user.user.uid;
+        // console.log("UUID:", uuid);
+        createNewPlayerStats(uuid);
+        createNewPlayerMatchHistory(uuid);
+      });
     } catch (err) {
       setError(err.message);
     }
