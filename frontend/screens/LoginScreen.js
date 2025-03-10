@@ -13,7 +13,7 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     try {
       await signIn(email, password);
-      navigation.navigate("Home");
+      navigation.navigate("Stats");
     } catch (err) {
       setError(err.message);
     }
@@ -40,7 +40,7 @@ const LoginScreen = () => {
       <Button title="Login" onPress={handleLogin} />
       <Button
         title="Go to Sign Up"
-        onPress={() => navigation.navigate("Sign Up")}
+        onPress={() => navigation.navigate("Signup")}
       />
     </View>
   );

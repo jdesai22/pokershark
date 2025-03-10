@@ -9,6 +9,11 @@ import {
   getPlayerStats,
   getPlayerMatchHistory,
 } from "@/utils/firestoreQueries";
+import {
+  createNewPlayerStats,
+  createNewPlayerMatchHistory,
+} from "@/utils/firestoreQueries";
+
 const StatsScreen = () => {
   // const chartData = {
   //   labels: ["Nov 23", "24", "25", "26", "27", "28", "29", "30"],
@@ -72,6 +77,17 @@ const StatsScreen = () => {
       });
     }
   };
+
+  // useEffect(() => {
+  //   const initializePlayerData = async () => {
+  //     if (user) {
+  //       await createNewPlayerStats(user.uid);
+  //       await createNewPlayerMatchHistory(user.uid);
+  //     }
+  //   };
+
+  //   initializePlayerData();
+  // }, [user]);
 
   useEffect(() => {
     if (user) {
