@@ -1,4 +1,4 @@
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, addDoc } from "firebase/firestore";
 import { firestore } from "@/config";
 
 async function getPlayerStats(uuid) {
@@ -41,4 +41,43 @@ async function getPlayerMatchHistory(uuid) {
   }
 }
 
-export { getPlayerStats, getPlayerMatchHistory };
+/**
+ * create a function to create a new user in the player-overall-stats database
+ * data should be { earnings: [], fold_ratio: 0, vpip: 0, win_loss_ratio: .1818}
+ *  */
+
+async function createNewPlayerStats(uuid) {
+  console.log("Creating new player stats for:", uuid);
+  const docRef = doc(firestore, "player-overall-stats", uuid);
+  try {
+    await setDoc(docRef, {
+      earnings: [],
+      fold_ratio: 0,
+      vpip: 0,
+      win_loss_ratio: 0,
+    });
+  } catch (error) {
+    console.error("Error creating player stats:", error);
+  }
+}
+
+/**
+ * create a function to create a new player in the player-match-history database
+ * data_should be {match_stats: {}, matches_played: []}
+ */
+
+async function createNewPlayerMatchHistory(uuid) {
+  const docRef = doc(firestore, "player-match-history", uuid);
+  try {
+    await setDoc(docRef, { match_stats: {}, matches_played: [] });
+  } catch (error) {
+    console.error("Error creating player match history:", error);
+  }
+}
+
+export {
+  getPlayerStats,
+  getPlayerMatchHistory,
+  createNewPlayerStats,
+  createNewPlayerMatchHistory,
+};

@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet } from "react-native";
 import { useAuth } from "../hooks/useAuth";
+import {
+  createNewPlayerStats,
+  createNewPlayerMatchHistory,
+} from "@/utils/firestoreQueries";
 
 const SignUpScreen = () => {
   const { signUp } = useAuth();
@@ -12,6 +16,11 @@ const SignUpScreen = () => {
     try {
       await signUp(email, password);
       // Navigate to the next screen or show success message
+      // after signup, create new player stats and match history, make sure to get the uuid from the user
+      const uuid = user.uid;
+      console.log("UUID:", uuid);
+      await createNewPlayerStats(uuid);
+      await createNewPlayerMatchHistory(uuid);
     } catch (err) {
       setError(err.message);
     }
