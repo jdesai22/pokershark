@@ -21,6 +21,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "expo": "~52.0.37",
+    "expo-brightness": "^13.0.3",
     "expo-camera": "~16.0.9",
     "expo-image": "^2.0.6",
     "expo-router": "^4.0.17",

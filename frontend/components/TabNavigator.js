@@ -13,7 +13,7 @@ import SocialScreen from "@/screens/SocialScreen";
 import MatchDetails from "../screens/MatchDetails";
 import { createStackNavigator } from "@react-navigation/stack";
 import CameraScreen from "../screens/CameraScreen";
-import LightSensor from "../screens/LightSensor";
+import Dimming from "../screens/Dimming";
 
 const EmptyScreen = () => {
   return null;
@@ -34,8 +34,8 @@ const TabNavigator = () => {
               iconName = "home";
             } else if (route.name === "Search") {
               iconName = "search";
-            } else if (route.name === "LightSensor") {
-              iconName = "refresh";
+            } else if (route.name === "Dimming") {
+              iconName = "bulb";
             } else if (route.name === "Login") {
               iconName = "log-in";
             } else if (route.name === "Signup") {
@@ -61,7 +61,7 @@ const TabNavigator = () => {
             <Tab.Screen name="Stats" component={StatsScreen} />
             <Tab.Screen name="Search" component={MatchHistory} />
             <Tab.Screen name="Social" component={SocialScreen} />
-            <Tab.Screen name="LightSensor" component={EmptyScreen} />
+            <Tab.Screen name="Dimming" component={Dimming} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
             <Tab.Screen name="Camera" component={CameraScreen} />
           </>
