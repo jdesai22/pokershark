@@ -9,10 +9,12 @@ import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import { useAuth } from "../hooks/useAuth";
 import ProfileScreen from "../screens/ProfileScreen";
+import SocialScreen from "@/screens/SocialScreen";
 import MatchDetails from "../screens/MatchDetails";
 import { createStackNavigator } from "@react-navigation/stack";
 import CameraScreen from "../screens/CameraScreen";
 import LightSensor from "../screens/LightSensor";
+
 const EmptyScreen = () => {
   return null;
 };
@@ -34,14 +36,14 @@ const TabNavigator = () => {
               iconName = "search";
             } else if (route.name === "LightSensor") {
               iconName = "refresh";
-            } else if (route.name === "Wallet") {
-              iconName = "wallet";
             } else if (route.name === "Login") {
               iconName = "log-in";
             } else if (route.name === "Signup") {
               iconName = "person-add";
             } else if (route.name === "Profile") {
               iconName = "person";
+            } else if (route.name === "Social") {
+              iconName = "chatbubbles";
             } else if (route.name === "Camera")
               iconName = "camera";
 
@@ -58,8 +60,8 @@ const TabNavigator = () => {
           <>
             <Tab.Screen name="Stats" component={StatsScreen} />
             <Tab.Screen name="Search" component={MatchHistory} />
+            <Tab.Screen name="Social" component={SocialScreen} />
             <Tab.Screen name="LightSensor" component={EmptyScreen} />
-            <Tab.Screen name="Wallet" component={EmptyScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
             <Tab.Screen name="Camera" component={CameraScreen} />
           </>
