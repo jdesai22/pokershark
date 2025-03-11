@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet } from "react-native";
+import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
+import { Card, Title } from "react-native-paper";
 
 const ProfileScreen = () => {
   const { user, signOut } = useAuth();
@@ -30,95 +31,105 @@ const ProfileScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.info}>{user?.email}</Text>
-      </View>
-
-      <View style={styles.passwordSection}>
-        <Text style={styles.subtitle}>Change Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="New Password"
-          value={newPassword}
-          onChangeText={setNewPassword}
-          secureTextEntry
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Image
+          source={{ uri: "" }} // Replace with actual profile image URL
+          style={styles.profileImage}
         />
-        <Button title="Update Password" onPress={handleChangePassword} />
+        <Text style={styles.title}>Profile</Text>
+        <Image
+          source={{
+            uri: "https://asiaiplaw.com/storage/media/image/article/7eb532aef980c36170c0b4426f082b87/banner/939314105ce8701e67489642ef4d49e8/conversions/Picture1-extra_large.jpg",
+          }} // Replace with actual profile image URL
+          style={styles.profileImage}
+        />
       </View>
-
-      {message ? <Text style={styles.success}>{message}</Text> : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <View style={styles.signOutSection}>
-        <Button title="Sign Out" onPress={handleSignOut} color="#FF3B30" />
+      <View style={styles.statsContainer}>
+        <Card style={styles.card}>
+          <Title style={styles.cardTitle}>Email</Title>
+          <Text style={styles.info}>{user?.email}</Text>
+        </Card>
+        <Card style={styles.card}>
+          <Title style={styles.cardTitle}>Change Password</Title>
+          <TextInput
+            style={styles.input}
+            placeholder="New Password"
+            value={newPassword}
+            onChangeText={setNewPassword}
+            secureTextEntry
+          />
+          <Button title="Update Password" onPress={handleChangePassword} />
+        </Card>
+        {message ? <Text style={styles.success}>{message}</Text> : null}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
       </View>
-    </View>
+        <TouchableOpacity onPress={handleSignOut} style={styles.newPostButton}>
+          <Text style={styles.buttonText}>Sign Out</Text>
+        </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
+    paddingTop: 50,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
   },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
+  profileImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 20,
   },
-  infoContainer: {
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 5,
+  statsContainer: {
+    paddingHorizontal: 20,
   },
   info: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  passwordSection: {
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
   input: {
+    padding: 10,
+    backgroundColor: "#fff",
+    marginHorizontal: 5,
     height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
     borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 15,
   },
-  signOutSection: {
-    marginTop: 20,
+  card: {
+    marginBottom: 20,
+    elevation: 4,
   },
-  error: {
-    color: "#FF3B30",
-    marginBottom: 10,
-    textAlign: "center",
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    padding: 10,
   },
-  success: {
-    color: "#34C759",
-    marginBottom: 10,
-    textAlign: "center",
+  newPostButton: {
+    backgroundColor: 'black',
+    padding: 15,
+    marginHorizontal: 15,
+    alignItems: 'center',
+    borderRadius: 10,
+    justifySelf: 'end',
+    marginTop: 'auto',
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
-
 export default ProfileScreen;
