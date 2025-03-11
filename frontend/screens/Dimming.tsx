@@ -14,7 +14,7 @@ export default function MotionSensorScreen() {
       subscription = DeviceMotion.addListener((motion) => {
         setMotionData(motion);
         if (
-          motion.rotation?.beta > 0.8 ||
+          motion.rotation?.beta > 0.8
         ) {
           Brightness.setSystemBrightnessAsync(1);
           setBrightnessReduced(true);
