@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Button, StyleSheet } from 'react-native';
 import { DeviceMotion } from 'expo-sensors';
 import * as Brightness from 'expo-brightness';
+import * as Haptics from 'expo-haptics';
 
 export default function MotionSensorScreen() {
   const [motionData, setMotionData] = useState(null);
@@ -73,6 +74,37 @@ export default function MotionSensorScreen() {
           <Text>Pitch: {motionData.orientation?.pitch?.toFixed(4)}</Text>
           <Text>Roll: {motionData.orientation?.roll?.toFixed(4)}</Text>
           <Text>Yaw: {motionData.orientation?.yaw?.toFixed(4)}</Text>
+
+        <Button
+          title="Light"
+          onPress={
+            () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          }
+        />
+        <Button
+          title="Medium"
+          onPress={
+            () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+          }
+        />
+        <Button
+          title="Heavy"
+          onPress={
+            () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+          }
+        />
+        <Button
+          title="Rigid"
+          onPress={
+            () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid)
+          }
+        />
+        <Button
+          title="Soft"
+          onPress={
+            () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+          }
+        />
         </View>
       ) : (
         <Text>Waiting for motion data...</Text>
