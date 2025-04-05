@@ -24,6 +24,7 @@ import {
   useCameraPermissions,
 } from "expo-camera";
 import * as Haptics from "expo-haptics";
+import { addNewMatchToPlayerMatchHistory } from "@/utils/firestoreQueries";
 
 // Card suits and values
 const SUITS = ["♠️", "♥️", "♦️", "♣️"];
@@ -264,12 +265,22 @@ const PokerSessionScreen = ({ navigation }) => {
     };
 
     try {
-      // Save to Firestore
-      // await addDoc(collection(firestore, "poker-sessions"), {
-      //   userId: user.uid,
-      //   ...sessionSummary,
-      // });
-      console.log(sessionSummary);
+      // Save to Firestore using the addNewMatchToPlayerMatchHistory function
+      // Note: This function already calls updatePlayerStats internally
+      await addNewMatchToPlayerMatchHistory(
+        user.uid,
+        sessionSummary.name,
+        new Date(sessionSummary.date),
+        sessionSummary.buy_in,
+        sessionSummary.final_amount,
+        sessionSummary.hands_played,
+        sessionSummary.hands_won,
+        sessionSummary.hands_folded,
+        sessionSummary.vpip_hands,
+        sessionSummary.hands_won_details
+      );
+
+      console.log("Session saved:", sessionSummary);
 
       Alert.alert(
         "Session Saved",
