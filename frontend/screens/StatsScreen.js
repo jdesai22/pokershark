@@ -7,8 +7,10 @@ import { useAuth } from "@/hooks/useAuth";
 import {SafeAreaView} from 'react-native';
 import {
   getPlayerStats,
-  getPlayerMatchHistory,
+  addNewMatchToPlayerMatchHistory,
+  updatePlayerStats,
 } from "@/utils/firestoreQueries";
+
 const StatsScreen = () => {
   // const chartData = {
   //   labels: ["Nov 23", "24", "25", "26", "27", "28", "29", "30"],
@@ -72,6 +74,47 @@ const StatsScreen = () => {
       });
     }
   };
+
+  // useEffect(() => {
+  //   const addMatchToPlayerMatchHistory = async () => {
+  //     if (user) {
+  //       const sampleData = {
+  //         uuid: "R9dQWQzkJ4ZxOT9Q8pgMIEPwxVr2", // Example UUID for the player
+  //         match_name: "match_004", // Name of the match
+  //         match_date: new Date("2023-10-04T14:00:00Z"), // Date of the match
+  //         buy_in: 20, // Buy-in amount
+  //         final_amount: 15, // Final amount after the match
+  //         hands_played: 80, // Total hands played in the match
+  //         hands_won: 40, // Total hands won in the match
+  //         hands_won_details: ["A5o", "K5o", "Q5o"],
+  //         hands_folded: 5, // Total hands folded in the match
+  //         vpip_hands: 30, // Total hands played in the match
+  //       };
+
+  //       await addNewMatchToPlayerMatchHistory(
+  //         sampleData.uuid,
+  //         sampleData.match_name,
+  //         sampleData.match_date,
+  //         sampleData.buy_in,
+  //         sampleData.final_amount,
+  //         sampleData.hands_played,
+  //         sampleData.hands_won,
+  //         sampleData.hands_folded,
+  //         sampleData.vpip_hands,
+  //         sampleData.hands_won_details
+  //       );
+  //       // await updatePlayerStats(
+  //       //   sampleData.uuid,
+  //       //   sampleData.hands_folded,
+  //       //   sampleData.hands_played,
+  //       //   sampleData.hands_won,
+  //       //   sampleData.vpip_hands
+  //       // );
+  //     }
+  //   };
+
+  //   addMatchToPlayerMatchHistory();
+  // }, [user]);
 
   useEffect(() => {
     if (user) {
