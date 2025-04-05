@@ -1,0 +1,11 @@
+{
+  "buy_in": 20,
+  "date": "2025-04-05T23:12:45.888Z",
+  "final_amount": 20,
+  "hands_folded": 0,
+  "hands_played": 1,
+  "hands_won": 1,
+  "hands_won_details": ["22o"],
+  "name": "test",
+  "vpip_hands": 0
+}

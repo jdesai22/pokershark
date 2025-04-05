@@ -8,6 +8,7 @@ import {
   TextInput,
   Alert,
   SafeAreaView,
+  Modal,
 } from "react-native";
 import { Card, Title, Button } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
@@ -15,6 +16,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { doc, setDoc, collection, addDoc } from "firebase/firestore";
 import { firestore } from "@/config";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import {
+  CameraMode,
+  CameraType,
+  CameraView,
+  useCameraPermissions,
+} from "expo-camera";
+import * as Haptics from "expo-haptics";
 
 // Card suits and values
 const SUITS = ["♠️", "♥️", "♦️", "♣️"];
@@ -45,22 +54,32 @@ interface HandData {
   folded: boolean;
   won: boolean;
   vpip: boolean; // Voluntarily Put Money In Pot
+  photoUri?: string; // Add photo URI to hand data
+  handNotation?: string; // Add hand notation field
+}
+
+interface WonHandSummary {
+  handNotation: string;
+  amountWon: number;
+  photoUri?: string;
 }
 
 interface SessionSummary {
+  name: string;
   buy_in: number;
   date: string;
   final_amount: number;
   hands_folded: number;
   hands_played: number;
   hands_won: number;
-  hands_won_details: HandData[];
+  hands_won_details: string[];
   vpip_hands: number;
 }
 
 const PokerSessionScreen = ({ navigation }) => {
   const { user } = useAuth();
   const [buyIn, setBuyIn] = useState("");
+  const [sessionName, setSessionName] = useState("");
   const [currentHand, setCurrentHand] = useState<HandData>({
     id: Date.now().toString(),
     cards: Array(2).fill({ suit: SUITS[0], value: CARD_VALUES[0] }),
@@ -76,12 +95,25 @@ const PokerSessionScreen = ({ navigation }) => {
     null
   );
 
+  // Add camera-related state
+  const [isCameraVisible, setIsCameraVisible] = useState(false);
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const cameraRef = React.useRef<CameraView>(null);
+
   // Start a new session
-  const startSession = () => {
+  const startSession = async () => {
+    if (!sessionName.trim()) {
+      Alert.alert("Invalid Input", "Please enter a session name");
+      return;
+    }
+
     if (!buyIn || isNaN(parseFloat(buyIn)) || parseFloat(buyIn) <= 0) {
       Alert.alert("Invalid Input", "Please enter a valid buy-in amount");
       return;
     }
+
+    // Provide haptic feedback
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     setIsSessionActive(true);
     setHands([]);
@@ -104,6 +136,35 @@ const PokerSessionScreen = ({ navigation }) => {
     });
   };
 
+  // Handle taking a photo
+  const handleTakePhoto = async () => {
+    if (!cameraPermission?.granted) {
+      const permission = await requestCameraPermission();
+      if (!permission.granted) {
+        Alert.alert(
+          "Permission Required",
+          "Camera permission is required to take photos."
+        );
+        return;
+      }
+    }
+    setIsCameraVisible(true);
+  };
+
+  // Handle photo capture
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      try {
+        const photo = await cameraRef.current.takePictureAsync();
+        setCurrentHand({ ...currentHand, photoUri: photo.uri });
+        setIsCameraVisible(false);
+      } catch (error) {
+        console.error("Error taking picture:", error);
+        Alert.alert("Error", "Failed to take picture. Please try again.");
+      }
+    }
+  };
+
   // Update a card in the current hand
   const updateCard = (
     index: number,
@@ -122,10 +183,35 @@ const PokerSessionScreen = ({ navigation }) => {
     });
   };
 
+  // Format cards into poker notation (e.g., KQo for offsuit, KQs for suited)
+  const getHandNotation = (cards: { suit: string; value: string }[]) => {
+    if (cards.length !== 2) return "";
+
+    // Sort values so higher card comes first
+    const cardValues = CARD_VALUES;
+    const sortedCards = [...cards].sort(
+      (a, b) => cardValues.indexOf(b.value) - cardValues.indexOf(a.value)
+    );
+
+    const notation = sortedCards[0].value + sortedCards[1].value;
+    const isSuited = sortedCards[0].suit === sortedCards[1].suit;
+
+    return notation + (isSuited ? "s" : "o");
+  };
+
   // Save the current hand and prepare for the next one
-  const saveHand = () => {
+  const saveHand = async () => {
+    // Provide haptic feedback
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+    // Add hand notation before saving
+    const handWithNotation = {
+      ...currentHand,
+      handNotation: getHandNotation(currentHand.cards),
+    };
+
     // Validate hand data if needed
-    setHands([...hands, currentHand]);
+    setHands([...hands, handWithNotation]);
     resetHandForm();
     // Collapse all card sections when starting a new hand
     setExpandedCardIndex(null);
@@ -148,11 +234,16 @@ const PokerSessionScreen = ({ navigation }) => {
       return;
     }
 
+    // Provide haptic feedback
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
     // Calculate session summary
     const handsPlayed = hands.length;
     const handsFolded = hands.filter((hand) => hand.folded).length;
     const handsWon = hands.filter((hand) => hand.won).length;
-    const handsWonDetails = hands.filter((hand) => hand.won);
+    const handsWonDetails: string[] = hands
+      .filter((hand) => hand.won)
+      .map((hand) => hand.handNotation || "");
     const vpipHands = hands.filter((hand) => hand.vpip).length;
 
     // Calculate final amount (buy-in + total won - total lost)
@@ -161,6 +252,7 @@ const PokerSessionScreen = ({ navigation }) => {
     const finalAmount = parseFloat(buyIn) + totalWon - totalLost;
 
     const sessionSummary: SessionSummary = {
+      name: sessionName,
       buy_in: parseFloat(buyIn),
       date: new Date().toISOString(),
       final_amount: finalAmount,
@@ -173,10 +265,11 @@ const PokerSessionScreen = ({ navigation }) => {
 
     try {
       // Save to Firestore
-      await addDoc(collection(firestore, "poker-sessions"), {
-        userId: user.uid,
-        ...sessionSummary,
-      });
+      // await addDoc(collection(firestore, "poker-sessions"), {
+      //   userId: user.uid,
+      //   ...sessionSummary,
+      // });
+      console.log(sessionSummary);
 
       Alert.alert(
         "Session Saved",
@@ -187,9 +280,8 @@ const PokerSessionScreen = ({ navigation }) => {
             onPress: () => {
               setIsSessionActive(false);
               setBuyIn("");
+              setSessionName("");
               setHands([]);
-              // Optionally navigate to stats or history screen
-              // navigation.navigate('Stats');
             },
           },
         ]
@@ -279,11 +371,87 @@ const PokerSessionScreen = ({ navigation }) => {
     );
   };
 
+  // Render camera modal
+  const renderCameraModal = () => (
+    <Modal
+      animationType="slide"
+      transparent={false}
+      visible={isCameraVisible}
+      onRequestClose={() => setIsCameraVisible(false)}
+    >
+      <View style={styles.cameraContainer}>
+        <CameraView
+          style={styles.camera}
+          ref={cameraRef}
+          mode="picture"
+          facing="back"
+        >
+          <View style={styles.cameraControls}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setIsCameraVisible(false)}
+            >
+              <Ionicons name="close" size={30} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={takePicture}
+            >
+              <View style={styles.captureButtonInner} />
+            </TouchableOpacity>
+          </View>
+        </CameraView>
+      </View>
+    </Modal>
+  );
+
+  // Render photo preview
+  const renderPhotoPreview = () => (
+    <View style={styles.photoPreviewContainer}>
+      {currentHand.photoUri ? (
+        <>
+          <Image
+            source={{ uri: currentHand.photoUri }}
+            style={styles.photoPreview}
+          />
+          <TouchableOpacity
+            style={styles.removePhotoButton}
+            onPress={() =>
+              setCurrentHand({ ...currentHand, photoUri: undefined })
+            }
+          >
+            <Ionicons name="close-circle" size={24} color="red" />
+          </TouchableOpacity>
+        </>
+      ) : (
+        <TouchableOpacity
+          style={styles.addPhotoButton}
+          onPress={handleTakePhoto}
+        >
+          <Ionicons name="camera" size={24} color="#007AFF" />
+          <Text style={styles.addPhotoText}>Add Photo</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
   // Render the session setup form
   const renderSessionSetup = () => (
     <Card style={styles.card}>
       <Card.Content>
         <Title style={styles.cardTitle}>Start New Poker Session</Title>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Session Name</Text>
+          <TextInput
+            style={styles.input}
+            value={sessionName}
+            onChangeText={setSessionName}
+            placeholder="Enter session name (e.g., Friday Night Game)"
+            autoCapitalize="words"
+          />
+        </View>
+
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Buy-in Amount ($)</Text>
           <TextInput
@@ -294,6 +462,7 @@ const PokerSessionScreen = ({ navigation }) => {
             placeholder="Enter buy-in amount"
           />
         </View>
+
         <Button mode="contained" onPress={startSession} style={styles.button}>
           Start Session
         </Button>
@@ -307,6 +476,9 @@ const PokerSessionScreen = ({ navigation }) => {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.cardTitle}>Hand #{hands.length + 1}</Title>
+
+          {/* Add photo preview section */}
+          {renderPhotoPreview()}
 
           {/* Selected Cards Display */}
           <View style={styles.selectedCardsDisplay}>
@@ -482,9 +654,9 @@ const PokerSessionScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.headerTitle}>Poker Session Tracker</Text>
-
         {isSessionActive ? renderHandTracker() : renderSessionSetup()}
       </ScrollView>
+      {renderCameraModal()}
     </SafeAreaView>
   );
 };
@@ -685,6 +857,79 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 16,
     marginBottom: 8,
+  },
+  cameraContainer: {
+    flex: 1,
+    backgroundColor: "black",
+  },
+  camera: {
+    flex: 1,
+  },
+  cameraControls: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  closeButton: {
+    padding: 8,
+  },
+  captureButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  captureButtonInner: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#007AFF",
+    borderWidth: 2,
+    borderColor: "white",
+  },
+  photoPreviewContainer: {
+    marginBottom: 16,
+    borderRadius: 8,
+    overflow: "hidden",
+    backgroundColor: "#f5f5f5",
+  },
+  photoPreview: {
+    width: "100%",
+    height: 200,
+    borderRadius: 8,
+  },
+  removePhotoButton: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 4,
+  },
+  addPhotoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderStyle: "dashed",
+  },
+  addPhotoText: {
+    color: "#007AFF",
+    fontSize: 16,
+    fontWeight: "500",
+    marginLeft: 8,
   },
 });
 
