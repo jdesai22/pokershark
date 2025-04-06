@@ -60,7 +60,7 @@ const SocialScreen = () => {
       />
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.primaryButton} onPress={handleNewPostPress}>
+        <TouchableOpacity style={styles.postButton} onPress={handleNewPostPress}>
           <Text style={styles.buttonText}>New Post</Text>
         </TouchableOpacity>
       </View>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1B1B1B',
-    paddingTop: 80,
+    paddingTop: 50,
     paddingHorizontal: 20,
   },
   header: {
@@ -150,17 +150,18 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
   },
-  primaryButton: {
+  postButton: {
     backgroundColor: '#E50914',
     paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 25,
+    borderRadius: 10,
+    marginBottom: 0,
     alignItems: 'center',
-    justifyContent: 'center',
+    width: '100%',
+    marginVertical: 10,
     shadowColor: '#E50914',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.6,
-    shadowRadius: 6,
+    shadowRadius: 10,
   },
   secondaryButton: {
     backgroundColor: '#333',
