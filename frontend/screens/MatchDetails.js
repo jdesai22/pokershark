@@ -41,25 +41,32 @@ const MatchDetails = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#1B1B1B",
     padding: 20,
+    alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
+    color: "#FFD700",
+    textAlign: "center",
     marginBottom: 20,
   },
   detail: {
     fontSize: 16,
+    color: "#fff",
     marginBottom: 10,
+    textAlign: "center",
   },
   detailsContainer: {
     marginTop: 20,
+    alignItems: "center",
   },
   detailItem: {
     fontSize: 14,
-    color: "gray",
+    color: "#ccc",
+    marginBottom: 4,
+    textAlign: "center",
   },
 });
 
