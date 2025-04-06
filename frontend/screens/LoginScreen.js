@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, TextInput, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
 

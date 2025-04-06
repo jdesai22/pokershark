@@ -33,7 +33,7 @@ const TabNavigator = () => {
 
           if (route.name === "Stats") {
             iconName = "home";
-          } else if (route.name === "Search") {
+          } else if (route.name === "History") {
             iconName = "search";
           } else if (route.name === "Dimming") {
             iconName = "bulb";
@@ -47,7 +47,7 @@ const TabNavigator = () => {
             iconName = "chatbubbles";
           } else if (route.name === "Camera") {
             iconName = "camera";
-          } else if (route.name === "Poker Session") {
+          } else if (route.name === "Sessions") {
             iconName = "card";
           }
 
@@ -62,12 +62,12 @@ const TabNavigator = () => {
       {isAuthenticated ? (
         <>
           <Tab.Screen name="Stats" component={StatsScreen} />
-          <Tab.Screen name="Search" component={MatchHistory} />
-          <Tab.Screen name="Social" component={SocialScreen} />
+          <Tab.Screen name="History" component={MatchHistory} />
           <Tab.Screen name="Dimming" component={Dimming} />
-          <Tab.Screen name="Poker Session" component={PokerSessionScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Sessions" component={PokerSessionScreen} />
           <Tab.Screen name="Camera" component={CameraScreen} />
+          <Tab.Screen name="Social" component={SocialScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
         </>
       ) : (
         <>
