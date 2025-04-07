@@ -100,32 +100,38 @@ async function addNewMatchToPlayerMatchHistory(
   const docRef = doc(firestore, "player-match-history", uuid);
   // add match_name to the matches_played array stored within the document with id uuid
   const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    console.log("data", data);
-    data.match_stats[match_name] = {
-      date: match_date,
-      buy_in: buy_in,
-      final_amount: final_amount,
-      hands_played: hands_played,
-      hands_won: hands_won,
-      hands_folded: hands_folded,
-      vpip_hands: vpip_hands,
-      hands_won_details: hands_won_details,
-    };
-    data.matches_played.push(match_name);
-    await setDoc(docRef, data);
 
-    await updatePlayerStats(
-      uuid,
-      hands_folded,
-      hands_played,
-      hands_won,
-      vpip_hands,
-      final_amount,
-      buy_in
-    );
+  let data;
+  if (docSnap.exists()) {
+    data = docSnap.data();
+  } else {
+    // Create a new document if it doesn't exist
+    data = { match_stats: {}, matches_played: [] };
   }
+
+  console.log("data", data);
+  data.match_stats[match_name] = {
+    date: match_date,
+    buy_in: buy_in,
+    final_amount: final_amount,
+    hands_played: hands_played,
+    hands_won: hands_won,
+    hands_folded: hands_folded,
+    vpip_hands: vpip_hands,
+    hands_won_details: hands_won_details,
+  };
+  data.matches_played.push(match_name);
+  await setDoc(docRef, data);
+
+  await updatePlayerStats(
+    uuid,
+    hands_folded,
+    hands_played,
+    hands_won,
+    vpip_hands,
+    final_amount,
+    buy_in
+  );
 }
 
 async function updatePlayerStats(
@@ -140,19 +146,34 @@ async function updatePlayerStats(
   console.log("Updating player stats for:", uuid);
   const docRef = doc(firestore, "player-overall-stats", uuid);
   const docSnap = await getDoc(docRef);
+
+  let data;
   if (docSnap.exists()) {
-    const data = docSnap.data();
+    data = docSnap.data();
     console.log("data", data);
     data.folded += hands_folded;
     data.earnings.push(final_amount - buy_in);
     data.played += hands_played;
     data.won += hands_won;
     data.vpip_total += vpip_hands;
-    data.fold_ratio = Math.round((data.folded / data.played) * 100) / 100;
-    data.vpip = Math.round((data.vpip_total / data.played) * 100) / 100;
-    data.win_loss_ratio = Math.round((data.won / data.played) * 100) / 100;
-    await setDoc(docRef, data);
+  } else {
+    // Create a new document if it doesn't exist
+    console.log("No player stats document exists, creating new one for:", uuid);
+    data = {
+      folded: hands_folded,
+      earnings: [final_amount - buy_in],
+      played: hands_played,
+      won: hands_won,
+      vpip_total: vpip_hands,
+    };
   }
+
+  // Calculate ratios for both cases
+  data.fold_ratio = Math.round((data.folded / data.played) * 100) / 100;
+  data.vpip = Math.round((data.vpip_total / data.played) * 100) / 100;
+  data.win_loss_ratio = Math.round((data.won / data.played) * 100) / 100;
+
+  await setDoc(docRef, data);
 }
 
 export {

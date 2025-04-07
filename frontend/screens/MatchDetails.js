@@ -24,16 +24,18 @@ const MatchDetails = ({ route }) => {
       <Text style={styles.detail}>Hands Won: {matchDetails.hands_won}</Text>
       <Text style={styles.detail}>VPIP Hands: {matchDetails.vpip_hands}</Text>
       {/* Optionally, render hands_won_details if needed */}
-      {matchDetails.hands_won_details && (
-        <View style={styles.detailsContainer}>
-          <Text style={styles.detail}>Hands Won Details:</Text>
-          {matchDetails.hands_won_details.map((detail, index) => (
-            <Text key={index} style={styles.detailItem}>
-              {detail}
-            </Text>
-          ))}
-        </View>
-      )}
+      {matchDetails.hands_won_details &&
+        Array.isArray(matchDetails.hands_won_details) &&
+        matchDetails.hands_won_details.length > 0 && (
+          <View style={styles.detailsContainer}>
+            <Text style={styles.detail}>Hands Won Details:</Text>
+            {matchDetails.hands_won_details.map((detail, index) => (
+              <Text key={index} style={styles.detailItem}>
+                {detail}
+              </Text>
+            ))}
+          </View>
+        )}
     </View>
   );
 };

@@ -13,7 +13,10 @@ import {
   StyleSheet,
   SafeAreaView,
 } from "react-native";
-import { getPlayerMatchHistory } from "../utils/firestoreQueries";
+import {
+  getPlayerMatchHistory,
+  addNewMatchToPlayerMatchHistory,
+} from "../utils/firestoreQueries";
 import { useAuth } from "../hooks/useAuth";
 
 const MatchItem = ({ name, date, detailedMatchHistory }) => {
@@ -46,6 +49,15 @@ const MatchHistory = () => {
   const { user } = useAuth(); // Get the authenticated user
   const [matchHistory, setMatchHistory] = useState([]);
   const [detailedMatchHistory, setDetailedMatchHistory] = useState([]);
+
+  // Add state for form inputs
+  const [matchName, setMatchName] = useState("");
+  const [matchDate, setMatchDate] = useState("");
+  const [buyIn, setBuyIn] = useState("");
+  const [finalAmount, setFinalAmount] = useState("");
+  const [handsFolded, setHandsFolded] = useState("");
+  const [handsPlayed, setHandsPlayed] = useState("");
+  const [vpipHands, setVpipHands] = useState("");
 
   useEffect(() => {
     const fetchMatchHistory = async () => {
@@ -98,6 +110,72 @@ const MatchHistory = () => {
     inputRange: [0, 1],
     outputRange: [500, 0], // Slide up from bottom
   });
+
+  // Function to handle form submission
+  const handleSubmit = async () => {
+    if (!user) return;
+
+    try {
+      // Convert inputs to appropriate types
+      const numericBuyIn = parseFloat(buyIn);
+      const numericFinalAmount = parseFloat(finalAmount);
+      const numericHandsFolded = parseInt(handsFolded);
+      const numericHandsPlayed = parseInt(handsPlayed);
+      const numericVpipHands = parseInt(vpipHands);
+
+      // Calculate hands won (simple calculation, adjust as needed)
+      const handsWon = numericHandsPlayed - numericHandsFolded;
+
+      // Call the Firestore function to add the match
+      await addNewMatchToPlayerMatchHistory(
+        user.uid,
+        matchName,
+        new Date(matchDate), // Convert string date to Date object
+        numericBuyIn,
+        numericFinalAmount,
+        numericHandsPlayed,
+        handsWon,
+        numericHandsFolded,
+        numericVpipHands,
+        {} // Empty object for hands_won_details
+      );
+
+      // Refresh match history
+      const updatedHistory = await getPlayerMatchHistory(user.uid);
+      setDetailedMatchHistory(updatedHistory.match_stats);
+
+      // Transform updated matchHistory data
+      const transformedData = Object.entries(updatedHistory.match_stats)
+        .map(([key, value]) => ({
+          name: key,
+          date: value.date.toDate(),
+          id: key,
+        }))
+        .sort((a, b) => b.date - a.date)
+        .map((item) => ({
+          ...item,
+          date: item.date.toLocaleDateString(),
+        }));
+
+      setMatchHistory(transformedData);
+
+      // Reset form fields
+      setMatchName("");
+      setMatchDate("");
+      setBuyIn("");
+      setFinalAmount("");
+      setHandsFolded("");
+      setHandsPlayed("");
+      setVpipHands("");
+
+      // Close modal
+      hideModal();
+    } catch (error) {
+      console.error("Error adding match:", error);
+      // You could add error handling UI here
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Modal for creating new match */}
@@ -107,7 +185,10 @@ const MatchHistory = () => {
         animationType="none"
         onRequestClose={hideModal}
       >
-        <ScrollView contentContainerStyle={styles.modalView} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={styles.modalView}
+          showsVerticalScrollIndicator={false}
+        >
           <Animated.View
             style={[
               styles.modalContent,
@@ -117,40 +198,90 @@ const MatchHistory = () => {
             <TouchableOpacity style={styles.closeButton} onPress={hideModal}>
               <Text style={styles.closeButtonText}>X</Text>
             </TouchableOpacity>
-  
+
             <Text style={styles.modalLabel}>Game Title</Text>
-            <TextInput style={styles.input} placeholderTextColor="#888" />
-  
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={matchName}
+              onChangeText={setMatchName}
+              placeholder="Enter game title"
+            />
+
             <Text style={styles.modalLabel}>Date</Text>
-            <TextInput style={styles.input} placeholderTextColor="#888" />
-  
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={matchDate}
+              onChangeText={setMatchDate}
+              placeholder="YYYY-MM-DD"
+            />
+
             <Text style={styles.modalLabel}>Buy-in</Text>
-            <TextInput style={styles.input} placeholderTextColor="#888" />
-  
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={buyIn}
+              onChangeText={setBuyIn}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+            />
+
             <Text style={styles.modalLabel}>Final Amount</Text>
-            <TextInput style={styles.input} placeholderTextColor="#888" />
-  
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={finalAmount}
+              onChangeText={setFinalAmount}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+            />
+
             <Text style={styles.modalLabel}>Number of Hands Folded</Text>
-            <TextInput style={styles.input} placeholderTextColor="#888" />
-  
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={handsFolded}
+              onChangeText={setHandsFolded}
+              placeholder="Enter number"
+              keyboardType="numeric"
+            />
+
             <Text style={styles.modalLabel}>Number of Hands Played</Text>
-            <TextInput style={styles.input} placeholderTextColor="#888" />
-  
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={handsPlayed}
+              onChangeText={setHandsPlayed}
+              placeholder="Enter number"
+              keyboardType="numeric"
+            />
+
             <Text style={styles.modalLabel}>Number of VPIP Hands</Text>
-            <TextInput style={styles.input} placeholderTextColor="#888" />
-  
-            <TouchableOpacity onPress={hideModal} style={styles.newPostButton}>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={vpipHands}
+              onChangeText={setVpipHands}
+              placeholder="Enter number"
+              keyboardType="numeric"
+            />
+
+            <TouchableOpacity
+              onPress={handleSubmit}
+              style={styles.newPostButton}
+            >
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
           </Animated.View>
         </ScrollView>
       </Modal>
-  
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>🌟 PokerShark Match History</Text>
       </View>
-  
+
       {/* Match list that scrolls independently */}
       <View style={styles.listContainer}>
         <FlatList
@@ -166,13 +297,13 @@ const MatchHistory = () => {
           contentContainerStyle={{ paddingBottom: 80 }}
         />
       </View>
-  
+
       {/* Pinned New Post button */}
       <TouchableOpacity onPress={showModal} style={styles.fixedPostButton}>
         <Text style={styles.buttonText}>New Post</Text>
       </TouchableOpacity>
     </SafeAreaView>
-  );  
+  );
 };
 
 const styles = StyleSheet.create({
@@ -300,7 +431,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     marginBottom: 0,
-  },  
+  },
 });
 
 export default MatchHistory;
