@@ -7,13 +7,16 @@ import {
   Animated,
   TouchableOpacity,
   FlatList,
+  ScrollView,
   View,
   Text,
   StyleSheet,
-  Image,
   SafeAreaView,
 } from "react-native";
-import { getPlayerMatchHistory } from "../utils/firestoreQueries";
+import {
+  getPlayerMatchHistory,
+  addNewMatchToPlayerMatchHistory,
+} from "../utils/firestoreQueries";
 import { useAuth } from "../hooks/useAuth";
 
 const MatchItem = ({ name, date, detailedMatchHistory }) => {
@@ -46,6 +49,15 @@ const MatchHistory = () => {
   const { user } = useAuth(); // Get the authenticated user
   const [matchHistory, setMatchHistory] = useState([]);
   const [detailedMatchHistory, setDetailedMatchHistory] = useState([]);
+
+  // Add state for form inputs
+  const [matchName, setMatchName] = useState("");
+  const [matchDate, setMatchDate] = useState("");
+  const [buyIn, setBuyIn] = useState("");
+  const [finalAmount, setFinalAmount] = useState("");
+  const [handsFolded, setHandsFolded] = useState("");
+  const [handsPlayed, setHandsPlayed] = useState("");
+  const [vpipHands, setVpipHands] = useState("");
 
   useEffect(() => {
     const fetchMatchHistory = async () => {
@@ -98,50 +110,180 @@ const MatchHistory = () => {
     inputRange: [0, 1],
     outputRange: [500, 0], // Slide up from bottom
   });
+
+  // Function to handle form submission
+  const handleSubmit = async () => {
+    if (!user) return;
+
+    try {
+      // Convert inputs to appropriate types
+      const numericBuyIn = parseFloat(buyIn);
+      const numericFinalAmount = parseFloat(finalAmount);
+      const numericHandsFolded = parseInt(handsFolded);
+      const numericHandsPlayed = parseInt(handsPlayed);
+      const numericVpipHands = parseInt(vpipHands);
+
+      // Calculate hands won (simple calculation, adjust as needed)
+      const handsWon = numericHandsPlayed - numericHandsFolded;
+
+      // Call the Firestore function to add the match
+      await addNewMatchToPlayerMatchHistory(
+        user.uid,
+        matchName,
+        new Date(matchDate), // Convert string date to Date object
+        numericBuyIn,
+        numericFinalAmount,
+        numericHandsPlayed,
+        handsWon,
+        numericHandsFolded,
+        numericVpipHands,
+        {} // Empty object for hands_won_details
+      );
+
+      // Refresh match history
+      const updatedHistory = await getPlayerMatchHistory(user.uid);
+      setDetailedMatchHistory(updatedHistory.match_stats);
+
+      // Transform updated matchHistory data
+      const transformedData = Object.entries(updatedHistory.match_stats)
+        .map(([key, value]) => ({
+          name: key,
+          date: value.date.toDate(),
+          id: key,
+        }))
+        .sort((a, b) => b.date - a.date)
+        .map((item) => ({
+          ...item,
+          date: item.date.toLocaleDateString(),
+        }));
+
+      setMatchHistory(transformedData);
+
+      // Reset form fields
+      setMatchName("");
+      setMatchDate("");
+      setBuyIn("");
+      setFinalAmount("");
+      setHandsFolded("");
+      setHandsPlayed("");
+      setVpipHands("");
+
+      // Close modal
+      hideModal();
+    } catch (error) {
+      console.error("Error adding match:", error);
+      // You could add error handling UI here
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      {/* Modal for creating new match */}
       <Modal
         visible={isModalVisible}
         transparent={true}
-        animationType="none" // Disable default modal animation
+        animationType="none"
         onRequestClose={hideModal}
       >
-        <View style={styles.modalOverlay}>
+        <ScrollView
+          contentContainerStyle={styles.modalView}
+          showsVerticalScrollIndicator={false}
+        >
           <Animated.View
             style={[
               styles.modalContent,
               { transform: [{ translateY: modalTranslateY }] },
             ]}
           >
-            {/* "X" button to close the modal */}
             <TouchableOpacity style={styles.closeButton} onPress={hideModal}>
               <Text style={styles.closeButtonText}>X</Text>
             </TouchableOpacity>
 
-            {/* Input fields */}
-            <Text>Game Title</Text>
-            <TextInput style={styles.input} />
-            <Text>Date</Text>
-            <TextInput style={styles.input} />
-            <Text>Buy-in</Text>
-            <TextInput style={styles.input} />
-            <Text>Final Amount</Text>
-            <TextInput style={styles.input} />
-            <Text>Number of Hands Folded</Text>
-            <TextInput style={styles.input} />
-            <Text>Number of Hands Played</Text>
-            <TextInput style={styles.input} />
-            <Text>Number of VPIP Hands</Text>
-            <TextInput style={styles.input} />
-            {/* Submit button */}
-            <Button title="Submit" onPress={() => hideModal()} />
+            <Text style={styles.modalLabel}>Game Title</Text>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={matchName}
+              onChangeText={setMatchName}
+              placeholder="Enter game title"
+            />
+
+            <Text style={styles.modalLabel}>Date</Text>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={matchDate}
+              onChangeText={setMatchDate}
+              placeholder="YYYY-MM-DD"
+            />
+
+            <Text style={styles.modalLabel}>Buy-in</Text>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={buyIn}
+              onChangeText={setBuyIn}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+            />
+
+            <Text style={styles.modalLabel}>Final Amount</Text>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={finalAmount}
+              onChangeText={setFinalAmount}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+            />
+
+            <Text style={styles.modalLabel}>Number of Hands Folded</Text>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={handsFolded}
+              onChangeText={setHandsFolded}
+              placeholder="Enter number"
+              keyboardType="numeric"
+            />
+
+            <Text style={styles.modalLabel}>Number of Hands Played</Text>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={handsPlayed}
+              onChangeText={setHandsPlayed}
+              placeholder="Enter number"
+              keyboardType="numeric"
+            />
+
+            <Text style={styles.modalLabel}>Number of VPIP Hands</Text>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor="#888"
+              value={vpipHands}
+              onChangeText={setVpipHands}
+              placeholder="Enter number"
+              keyboardType="numeric"
+            />
+
+            <TouchableOpacity
+              onPress={handleSubmit}
+              style={styles.newPostButton}
+            >
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
           </Animated.View>
-        </View>
+        </ScrollView>
       </Modal>
+
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Match History</Text>
+        <Text style={styles.title}>🌟 PokerShark Match History</Text>
       </View>
-      <View>
+
+      {/* Match list that scrolls independently */}
+      <View style={styles.listContainer}>
         <FlatList
           data={matchHistory}
           renderItem={({ item }) => (
@@ -152,9 +294,12 @@ const MatchHistory = () => {
             />
           )}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingBottom: 80 }}
         />
       </View>
-      <TouchableOpacity onPress={showModal} style={styles.newPostButton}>
+
+      {/* Pinned New Post button */}
+      <TouchableOpacity onPress={showModal} style={styles.fixedPostButton}>
         <Text style={styles.buttonText}>New Post</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -164,45 +309,33 @@ const MatchHistory = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#1B1B1B",
     paddingTop: 50,
   },
   header: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingHorizontal: 10,
+    paddingTop: 0,
     marginBottom: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  historyContainer: {
-    paddingHorizontal: 20,
-  },
-  card: {
-    marginBottom: 20,
-    elevation: 4,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    padding: 10,
+    color: "#FFD700",
   },
   matchItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor: "#2C2C2C",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: "#444",
+    borderRadius: 10,
+    marginHorizontal: 15,
+    marginVertical: 6,
   },
   matchInfoContainer: {
     flexDirection: "row",
@@ -212,63 +345,92 @@ const styles = StyleSheet.create({
   },
   matchName: {
     fontWeight: "bold",
-    marginLeft: 20,
+    marginLeft: 10,
     flex: 1,
+    color: "#fff",
   },
   matchDate: {
-    color: "#666",
+    color: "#ccc",
     fontSize: 14,
-    marginRight: 20,
-  },
-  matchInfo: {
-    color: "#666",
-    fontSize: 14,
+    marginRight: 10,
   },
   detailsButton: {
-    backgroundColor: "black",
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 5,
+    backgroundColor: "#E50914",
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 6,
   },
   buttonText: {
-    color: "white",
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 16,
   },
   newPostButton: {
-    backgroundColor: "black",
+    backgroundColor: "#E50914",
     padding: 15,
     marginHorizontal: 15,
     alignItems: "center",
     borderRadius: 10,
-    justifySelf: "end",
     marginTop: "auto",
-    marginBottom: 20,
+    marginBottom: 25,
   },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  modalView: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: "#2C2C2C",
+    borderRadius: 20,
     padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    height: "70%",
+    width: "85%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   closeButton: {
     alignSelf: "flex-end",
+    marginBottom: 0,
   },
   closeButtonText: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: "bold",
+    color: "#FFD700",
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
+    borderColor: "#555",
+    borderRadius: 8,
     padding: 10,
-    marginBottom: 10,
+    marginBottom: 15,
+    color: "#fff",
+    backgroundColor: "#1B1B1B",
+  },
+  modalLabel: {
+    color: "#FFD700",
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 4,
+    alignSelf: "flex-start",
+  },
+  listContainer: {
+    flex: 1,
+    paddingBottom: 100,
+  },
+  fixedPostButton: {
+    backgroundColor: "#E50914",
+    padding: 15,
+    marginHorizontal: 15,
+    alignItems: "center",
+    borderRadius: 10,
+    position: "absolute",
+    bottom: 30,
+    left: 0,
+    right: 0,
+    marginBottom: 0,
   },
 });
 

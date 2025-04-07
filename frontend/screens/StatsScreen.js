@@ -33,21 +33,22 @@ const StatsScreen = () => {
   const [chartData, setChartData] = useState([]);
 
   const chartConfig = {
-    backgroundColor: "#ffffff",
-    backgroundGradientFrom: "#ffffff",
-    backgroundGradientTo: "#ffffff",
+    backgroundColor: "#1B1B1B",
+    backgroundGradientFrom: "#1B1B1B",
+    backgroundGradientTo: "#1B1B1B",
     decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(255, 215, 0, ${opacity})`,
     style: {
       borderRadius: 16,
     },
     propsForDots: {
       r: "6",
       strokeWidth: "2",
-      stroke: "#007AFF",
+      stroke: "#FFD700",
     },
   };
+  
 
   const setupChartData = (earnings) => {
     // Check if earnings exist and is an array
@@ -145,13 +146,7 @@ const StatsScreen = () => {
           source={{ uri: "" }} // Replace with actual profile image URL
           style={styles.profileImage}
         />
-        <Text style={styles.title}>PokerShark Analytics</Text>
-        <Image
-          source={{
-            uri: "https://asiaiplaw.com/storage/media/image/article/7eb532aef980c36170c0b4426f082b87/banner/939314105ce8701e67489642ef4d49e8/conversions/Picture1-extra_large.jpg",
-          }} // Replace with actual profile image URL
-          style={styles.profileImage}
-        />
+        <Text style={styles.title}>💎 PokerShark Analytics</Text>
       </View>
       <View style={styles.statsContainer}>
         <Card style={styles.card}>
@@ -194,37 +189,41 @@ const StatsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 50,
+    backgroundColor: "#1B1B1B",
+    paddingTop: 30,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 50,
     paddingTop: 20,
     marginBottom: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
-  },
-  profileImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 20,
+    color: "#FFD700",
+    textAlign: "center",
   },
   statsContainer: {
     paddingHorizontal: 20,
   },
   card: {
+    backgroundColor: "#2C2C2C",
     marginBottom: 20,
     elevation: 4,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: "bold",
     padding: 10,
+    color: "#FFD700",
   },
   metrics: {
     flexDirection: "row",
@@ -236,11 +235,12 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: 14,
-    color: "#666",
+    color: "#ccc",
   },
   metricValue: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#fff",
   },
   chart: {
     marginVertical: 8,
