@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1B1B1B',
-    paddingTop: 50,
+    paddingTop: 75,
     paddingHorizontal: 20,
   },
   header: {
@@ -158,10 +158,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginVertical: 10,
-    shadowColor: '#E50914',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.6,
-    shadowRadius: 10,
   },
   secondaryButton: {
     backgroundColor: '#333',
