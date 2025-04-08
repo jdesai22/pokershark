@@ -58,7 +58,7 @@ const StatsScreen = () => {
     }
 
     const labels = earnings.map((_, index) => `${index + 1}`);
-    labels[0] = "Game 1";
+    labels[0] = "1";
     const data = earnings;
 
     // Make sure we have data before setting the chart data
@@ -245,6 +245,7 @@ const styles = StyleSheet.create({
   chart: {
     marginVertical: 8,
     borderRadius: 16,
+    alignSelf: "center", // This will center the chart
   },
 });
 
