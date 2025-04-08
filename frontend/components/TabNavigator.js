@@ -16,10 +16,6 @@ import CameraScreen from "../screens/CameraScreen";
 import Dimming from "../screens/Dimming";
 import PokerSessionScreen from "../screens/PokerSessionScreen";
 
-const EmptyScreen = () => {
-  return null;
-};
-
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -45,8 +41,6 @@ const TabNavigator = () => {
             iconName = "person";
           } else if (route.name === "Social") {
             iconName = "chatbubbles";
-          } else if (route.name === "Camera") {
-            iconName = "camera";
           } else if (route.name === "Sessions") {
             iconName = "card";
           }
@@ -65,7 +59,6 @@ const TabNavigator = () => {
           <Tab.Screen name="History" component={MatchHistory} />
           <Tab.Screen name="Sessions" component={PokerSessionScreen} />
           <Tab.Screen name="Dimming" component={Dimming} />
-          <Tab.Screen name="Camera" component={CameraScreen} />
           <Tab.Screen name="Social" component={SocialScreen} />
           <Tab.Screen name="Profile" component={ProfileScreen} />
         </>
@@ -86,7 +79,7 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="MainTabs"
+          name="Main Tabs"
           component={TabNavigator}
           options={{ headerShown: false }} // Hide tab navigator header
         />

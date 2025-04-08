@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, Button, StyleSheet } from "react-native";
+import { View, Text, ScrollView, Button, StyleSheet, TouchableOpacity } from "react-native";
 import { DeviceMotion } from "expo-sensors";
 import * as Brightness from "expo-brightness";
 import * as Haptics from "expo-haptics";
@@ -47,25 +47,25 @@ export default function MotionSensorScreen() {
   }, []);
 
   return (
-    <ScrollView style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 10 }}>
-        Device Motion Data
-      </Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>❤️ PokerShark Dimming</Text>
       {brightnessReduced && (
-        <Text style={{ color: "red", fontSize: 18, fontWeight: "bold" }}>
-          Brightening Screen
-        </Text>
+        <Text style={styles.brightnessStatus}>Brightening Screen</Text>
       )}
-      <Button
-        title={dimmingEnabled ? "Disable Dimming" : "Enable Dimming"}
+      <TouchableOpacity
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           setDimmingEnabled(!dimmingEnabled);
         }}
-      />
-      <Text style={{ marginTop: 20 }}>Adjust Maximum Brightness Level:</Text>
+        style={styles.updateButton}
+      >
+        <Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>
+          {dimmingEnabled ? "Disable Dimming" : "Enable Dimming"}
+        </Text>
+      </TouchableOpacity>
+      <Text style={styles.adjustText}>Adjust Maximum Brightness Level:</Text>
       <Slider
-        style={{ width: "100%", height: 40 }}
+        style={styles.slider}
         minimumValue={0}
         maximumValue={1}
         value={brightnessLevel}
@@ -73,68 +73,47 @@ export default function MotionSensorScreen() {
         minimumTrackTintColor="#007AFF"
         maximumTrackTintColor="#000000"
       />
-      {motionData ? (
-        <View>
-          <Text>Acceleration (G):</Text>
-          <Text>X: {motionData.acceleration?.x?.toFixed(4)}</Text>
-          <Text>Y: {motionData.acceleration?.y?.toFixed(4)}</Text>
-          <Text>Z: {motionData.acceleration?.z?.toFixed(4)}</Text>
-
-          <Text style={{ marginTop: 10 }}>Acceleration with Gravity (G):</Text>
-          <Text>
-            X: {motionData.accelerationIncludingGravity?.x?.toFixed(4)}
-          </Text>
-          <Text>
-            Y: {motionData.accelerationIncludingGravity?.y?.toFixed(4)}
-          </Text>
-          <Text>
-            Z: {motionData.accelerationIncludingGravity?.z?.toFixed(4)}
-          </Text>
-
-          <Text style={{ marginTop: 10 }}>Rotation Rate (deg/s):</Text>
-          <Text>Alpha: {motionData.rotation?.alpha?.toFixed(4)}</Text>
-          <Text>Beta: {motionData.rotation?.beta?.toFixed(4)}</Text>
-          <Text>Gamma: {motionData.rotation?.gamma?.toFixed(4)}</Text>
-
-          <Text style={{ marginTop: 10 }}>Orientation:</Text>
-          <Text>Pitch: {motionData.orientation?.pitch?.toFixed(4)}</Text>
-          <Text>Roll: {motionData.orientation?.roll?.toFixed(4)}</Text>
-          <Text>Yaw: {motionData.orientation?.yaw?.toFixed(4)}</Text>
-
-          <Button
-            title="Light"
-            onPress={() =>
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-            }
-          />
-          <Button
-            title="Medium"
-            onPress={() =>
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-            }
-          />
-          <Button
-            title="Heavy"
-            onPress={() =>
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-            }
-          />
-          <Button
-            title="Rigid"
-            onPress={() =>
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid)
-            }
-          />
-          <Button
-            title="Soft"
-            onPress={() =>
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
-            }
-          />
-        </View>
-      ) : (
-        <Text>Waiting for motion data...</Text>
-      )}
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#1B1B1B", // Dark background
+    justifyContent: "center", // Center elements vertically
+    alignItems: "center", // Center elements horizontally
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#FFD700", // Gold text color for the title
+  },
+  brightnessStatus: {
+    color: "red",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  adjustText: {
+    marginTop: 20,
+    color: "#FFD700", // Gold text color for the label
+    fontSize: 16,
+  },
+  slider: {
+    width: "80%", // Make slider width consistent with the layout
+    height: 40,
+    marginTop: 20,
+  },
+  updateButton: {
+    backgroundColor: "#E50914", // Red background color
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    width: "60%", // Adjust width as needed
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
