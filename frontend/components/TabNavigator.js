@@ -49,14 +49,7 @@ const TabNavigator = () => {
         },
         tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "#666",
-        tabBarStyle: {
-          height: 60,
-          paddingBottom: 10,
-          paddingHorizontal: 10, 
-        },
-        tabBarItemStyle: {
-          paddingHorizontal: 10,
-        },
+        tabBarStyle: { height: 60, paddingBottom: 10 },
         headerShown: false,
       })}
     >
@@ -66,7 +59,7 @@ const TabNavigator = () => {
           <Tab.Screen name="History" component={MatchHistory} />
           <Tab.Screen name="Sessions" component={PokerSessionScreen} />
           <Tab.Screen name="Dimming" component={Dimming} />
-          {/* <Tab.Screen name="Social" component={SocialScreen} /> */}
+          <Tab.Screen name="Social" component={SocialScreen} />
           <Tab.Screen name="Profile" component={ProfileScreen} />
         </>
       ) : (

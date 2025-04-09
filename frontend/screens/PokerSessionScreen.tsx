@@ -664,7 +664,7 @@ const PokerSessionScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.headerTitle}>♣️ PokerShark Session Tracker</Text>
+        <Text style={styles.headerTitle}>♣️ Poker Session Tracker</Text>
         {isSessionActive ? renderHandTracker() : renderSessionSetup()}
       </ScrollView>
       {renderCameraModal()}
@@ -675,7 +675,7 @@ const PokerSessionScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1B1B1B",
+    backgroundColor: "#1B1B1B", // Dark background for the container
   },
   scrollContainer: {
     padding: 16,
@@ -685,17 +685,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
-    color: "#FFD700",
+    color: "#FFD700", // Gold color for the header text
   },
   card: {
     marginBottom: 16,
     elevation: 2,
-    backgroundColor: "#2C2C2C",
+    backgroundColor: "#2C2C2C", // Dark card background
   },
   cardTitle: {
     fontSize: 18,
     marginBottom: 16,
-    color: "#FFD700",
+    color: "#FFD700", // Gold color for the title text
   },
   selectedCardsDisplay: {
     marginBottom: 16,
@@ -749,20 +749,20 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 8,
-    color: "#FFD700",
+    color: "#FFD700", // Gold color for labels
   },
   input: {
     height: 40,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#ddd", // Light border
     borderRadius: 4,
     paddingHorizontal: 8,
-    backgroundColor: "#333", 
-    color: "#fff",
+    backgroundColor: "#333", // Dark input field background
+    color: "#fff", // White text
   },
   button: {
     marginTop: 8,
-    backgroundColor: "#E50914",
+    backgroundColor: "#E50914", // Red button color
   },
   endButton: {
     backgroundColor: "#d32f2f",
