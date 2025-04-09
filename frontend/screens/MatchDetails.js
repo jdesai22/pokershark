@@ -49,10 +49,11 @@ const MatchDetails = ({ route }) => {
     loadCardImages();
   }, []);
 
-  // Handle image change
+  // Handle image change - fix the calculation for the current image index
   const handleScroll = (event) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const newIndex = Math.round((contentOffsetX / width) * 0.8);
+    const imageWidth = width * 0.8; // This should match the width in your View style
+    const newIndex = Math.round(contentOffsetX / imageWidth);
     setCurrentImageIndex(newIndex);
   };
 

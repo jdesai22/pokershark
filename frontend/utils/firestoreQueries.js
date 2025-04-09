@@ -9,7 +9,7 @@ async function getPlayerStats(uuid) {
 
     if (docSnap.exists()) {
       const data = docSnap.data();
-      console.log("Document data:", data);
+      // console.log("Document data:", data);
       return data; // Access the nested player_overall_stats
     } else {
       console.log("No such document!");
