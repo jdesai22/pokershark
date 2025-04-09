@@ -109,7 +109,7 @@ async function addNewMatchToPlayerMatchHistory(
     data = { match_stats: {}, matches_played: [] };
   }
 
-  console.log("data", data);
+  // console.log("data", data);
   data.match_stats[match_name] = {
     date: match_date,
     buy_in: buy_in,
@@ -150,7 +150,7 @@ async function updatePlayerStats(
   let data;
   if (docSnap.exists()) {
     data = docSnap.data();
-    console.log("data", data);
+    // console.log("data", data);
     data.folded += hands_folded;
     data.earnings.push(final_amount - buy_in);
     data.played += hands_played;
