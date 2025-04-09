@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import { Card, Title } from "react-native-paper";
 import { LineChart } from "react-native-chart-kit";
 import { useAuth } from "@/hooks/useAuth";
-import {SafeAreaView} from 'react-native';
+import { SafeAreaView } from "react-native";
 import {
   getPlayerStats,
   addNewMatchToPlayerMatchHistory,
@@ -48,7 +48,6 @@ const StatsScreen = () => {
       stroke: "#FFD700",
     },
   };
-  
 
   const setupChartData = (earnings) => {
     // Check if earnings exist and is an array
@@ -58,7 +57,7 @@ const StatsScreen = () => {
     }
 
     const labels = earnings.map((_, index) => `${index + 1}`);
-    labels[0] = "1";
+    labels[0] = "Game 1";
     const data = earnings;
 
     // Make sure we have data before setting the chart data
@@ -135,9 +134,9 @@ const StatsScreen = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log(chartData);
-  }, [chartData]);
+  // useEffect(() => {
+  //   console.log(chartData);
+  // }, [chartData]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -245,7 +244,6 @@ const styles = StyleSheet.create({
   chart: {
     marginVertical: 8,
     borderRadius: 16,
-    alignSelf: "center", // This will center the chart
   },
 });
 
