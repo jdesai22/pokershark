@@ -12,17 +12,6 @@ import {
 } from "@/utils/firestoreQueries";
 
 const StatsScreen = () => {
-  // const chartData = {
-  //   labels: ["Nov 23", "24", "25", "26", "27", "28", "29", "30"],
-  //   datasets: [
-  //     {
-  //       data: [5, 6, 8, 12, 15, 18, 22, 25],
-  //       color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`, // Blue line
-  //       strokeWidth: 2,
-  //     },
-  //   ],
-  // };
-
   const { user, isAuthenticated } = useAuth();
 
   const [winlossRatio, setWinlossRatio] = useState(0);
@@ -75,52 +64,9 @@ const StatsScreen = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const addMatchToPlayerMatchHistory = async () => {
-  //     if (user) {
-  //       const sampleData = {
-  //         uuid: "R9dQWQzkJ4ZxOT9Q8pgMIEPwxVr2", // Example UUID for the player
-  //         match_name: "match_004", // Name of the match
-  //         match_date: new Date("2023-10-04T14:00:00Z"), // Date of the match
-  //         buy_in: 20, // Buy-in amount
-  //         final_amount: 15, // Final amount after the match
-  //         hands_played: 80, // Total hands played in the match
-  //         hands_won: 40, // Total hands won in the match
-  //         hands_won_details: ["A5o", "K5o", "Q5o"],
-  //         hands_folded: 5, // Total hands folded in the match
-  //         vpip_hands: 30, // Total hands played in the match
-  //       };
-
-  //       await addNewMatchToPlayerMatchHistory(
-  //         sampleData.uuid,
-  //         sampleData.match_name,
-  //         sampleData.match_date,
-  //         sampleData.buy_in,
-  //         sampleData.final_amount,
-  //         sampleData.hands_played,
-  //         sampleData.hands_won,
-  //         sampleData.hands_folded,
-  //         sampleData.vpip_hands,
-  //         sampleData.hands_won_details
-  //       );
-  //       // await updatePlayerStats(
-  //       //   sampleData.uuid,
-  //       //   sampleData.hands_folded,
-  //       //   sampleData.hands_played,
-  //       //   sampleData.hands_won,
-  //       //   sampleData.vpip_hands
-  //       // );
-  //     }
-  //   };
-
-  //   addMatchToPlayerMatchHistory();
-  // }, [user]);
-
   useEffect(() => {
     if (user) {
       getPlayerStats(user.uid).then((stats) => {
-        // console.log("Stats:", stats);
-        // console.log("Stats earnings:", stats.earnings); // Check the structure of earnings
         setWinlossRatio(stats.win_loss_ratio);
         setFoldRatio(stats.fold_ratio);
         setVpip(stats.vpip);
@@ -128,23 +74,12 @@ const StatsScreen = () => {
         setEarnings(earnings);
         setupChartData(earnings);
       });
-      // getPlayerMatchHistory(user.uid).then((matchHistory) => {
-      //   console.log(matchHistory);
-      // });
     }
   }, [user]);
-
-  // useEffect(() => {
-  //   console.log(chartData);
-  // }, [chartData]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={{ uri: "" }} // Replace with actual profile image URL
-          style={styles.profileImage}
-        />
         <Text style={styles.title}>💎 PokerShark Analytics</Text>
       </View>
       <View style={styles.statsContainer}>

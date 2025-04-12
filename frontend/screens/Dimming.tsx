@@ -80,16 +80,16 @@ export default function MotionSensorScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1B1B1B", // Dark background
-    justifyContent: "center", // Center elements vertically
-    alignItems: "center", // Center elements horizontally
+    backgroundColor: "#1B1B1B",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#FFD700", // Gold text color for the title
+    color: "#FFD700",
   },
   brightnessStatus: {
     color: "red",
@@ -99,20 +99,20 @@ const styles = StyleSheet.create({
   },
   adjustText: {
     marginTop: 20,
-    color: "#FFD700", // Gold text color for the label
+    color: "#FFD700",
     fontSize: 16,
   },
   slider: {
-    width: "80%", // Make slider width consistent with the layout
+    width: "80%",
     height: 40,
     marginTop: 20,
   },
   updateButton: {
-    backgroundColor: "#E50914", // Red background color
+    backgroundColor: "#E50914",
     padding: 15,
     borderRadius: 10,
     marginTop: 20,
-    width: "60%", // Adjust width as needed
+    width: "60%",
     alignItems: "center",
     justifyContent: "center",
   },

@@ -675,27 +675,31 @@ const PokerSessionScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1B1B1B", // Dark background for the container
+    backgroundColor: "#1B1B1B",
   },
   scrollContainer: {
     padding: 16,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+    color: "#FFD700",
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
-    color: "#FFD700", // Gold color for the header text
+    color: "#FFD700", 
   },
   card: {
     marginBottom: 16,
     elevation: 2,
-    backgroundColor: "#2C2C2C", // Dark card background
+    backgroundColor: "#2C2C2C", 
   },
   cardTitle: {
     fontSize: 18,
     marginBottom: 16,
-    color: "#FFD700", // Gold color for the title text
+    color: "#FFD700",
   },
   selectedCardsDisplay: {
     marginBottom: 16,
@@ -704,6 +708,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 8,
+    color: "#FFD700",
   },
   cardChipsContainer: {
     flexDirection: "row",
@@ -749,20 +754,20 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 8,
-    color: "#FFD700", // Gold color for labels
+    color: "#FFD700",
   },
   input: {
     height: 40,
     borderWidth: 1,
-    borderColor: "#ddd", // Light border
+    borderColor: "#ddd",
     borderRadius: 4,
     paddingHorizontal: 8,
-    backgroundColor: "#333", // Dark input field background
-    color: "#fff", // White text
+    backgroundColor: "#333",
+    color: "#fff",
   },
   button: {
     marginTop: 8,
-    backgroundColor: "#E50914", // Red button color
+    backgroundColor: "#E50914",
   },
   endButton: {
     backgroundColor: "#d32f2f",
@@ -874,6 +879,7 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 16,
     marginBottom: 8,
+    color: "#FFF",
   },
   cameraContainer: {
     flex: 1,
