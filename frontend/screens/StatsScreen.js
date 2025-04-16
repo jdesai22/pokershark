@@ -1,6 +1,6 @@
 // screens/StatsScreen.js
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Card, Title } from "react-native-paper";
 import { LineChart } from "react-native-chart-kit";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,6 +20,12 @@ const StatsScreen = () => {
 
   const [earnings, setEarnings] = useState([]);
   const [chartData, setChartData] = useState([]);
+  const [feedbackPrompt, setFeedbackPrompt] = useState("");
+  const [aiFeedback, setAiFeedback] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const openrouterKey =
+    "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";
 
   const chartConfig = {
     backgroundColor: "#1B1B1B",
@@ -71,11 +77,86 @@ const StatsScreen = () => {
         setFoldRatio(stats.fold_ratio);
         setVpip(stats.vpip);
         const earnings = stats.earnings;
+
         setEarnings(earnings);
         setupChartData(earnings);
+
+        // Create feedback prompt for AI model
+        const prompt = `Analyze this poker player's stats and provide concise feedback (under 150 chars):
+- Win/Loss Ratio: ${stats.win_loss_ratio}
+- Fold Ratio: ${stats.fold_ratio}
+- VPIP: ${stats.vpip}
+- Earnings Trend: ${earnings.join(", ")}`;
+        console.log("prompt", prompt);
+        setFeedbackPrompt(prompt);
       });
     }
   }, [user]);
+
+  const getAIFeedback = async () => {
+    if (!feedbackPrompt) {
+      console.log("No feedback prompt available");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${openrouterKey}`,
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-pro-exp-03-25:free",
+            messages: [
+              {
+                role: "user",
+                content: feedbackPrompt,
+              },
+            ],
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log("AI Feedback Response:", data);
+
+      if (response.status === 429) {
+        console.error("Error 429: Prompt limit exceeded");
+        setAiFeedback(
+          "Sorry, the AI prompt limit has been exceeded. Please try again later."
+        );
+        return;
+      }
+
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        const feedback = data.choices[0].message.content;
+        setAiFeedback(feedback);
+        console.log("AI Feedback:", feedback);
+      } else {
+        // Log the full structure to understand the response format
+        console.log("Response structure:", JSON.stringify(data));
+
+        // Try to access the message content differently if needed
+        if (data.choices && data.choices[0]) {
+          console.log("Message object:", data.choices[0].message);
+        }
+      }
+    } catch (error) {
+      console.error("Error getting AI feedback:", error);
+      if (error.message && error.message.includes("429")) {
+        setAiFeedback(
+          "Sorry, the AI prompt limit has been exceeded. Please try again later."
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -115,6 +196,23 @@ const StatsScreen = () => {
               />
             )}
         </Card>
+
+        {aiFeedback ? (
+          <Card style={styles.card}>
+            <Title style={styles.cardTitle}>AI Feedback</Title>
+            <Text style={styles.feedbackText}>{aiFeedback}</Text>
+          </Card>
+        ) : null}
+
+        <TouchableOpacity
+          style={styles.feedbackButton}
+          onPress={getAIFeedback}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>
+            {isLoading ? "Loading..." : "Get AI Feedback"}
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -179,6 +277,25 @@ const styles = StyleSheet.create({
   chart: {
     marginVertical: 8,
     borderRadius: 16,
+  },
+  feedbackButton: {
+    backgroundColor: "#FFD700",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: "#1B1B1B",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  feedbackText: {
+    color: "#fff",
+    padding: 15,
+    fontSize: 16,
+    lineHeight: 24,
   },
 });
 
