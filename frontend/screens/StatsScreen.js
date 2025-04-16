@@ -80,13 +80,15 @@ const StatsScreen = () => {
 
         setEarnings(earnings);
         setupChartData(earnings);
-
-        // Create feedback prompt for AI model
-        const prompt = `Analyze this poker player's stats and provide concise feedback (under 150 chars):
+        
+        // Create feedback prompt for AI model with personalized language
+        const prompt = `Analyze these poker stats and provide personalized feedback (under 150 chars). 
+Address the player directly using "you" and "your":
 - Win/Loss Ratio: ${stats.win_loss_ratio}
 - Fold Ratio: ${stats.fold_ratio}
 - VPIP: ${stats.vpip}
-- Earnings Trend: ${earnings.join(", ")}`;
+- Earnings Trend: ${earnings.join(', ')}`;
+        
         console.log("prompt", prompt);
         setFeedbackPrompt(prompt);
       });
@@ -108,10 +110,11 @@ const StatsScreen = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${openrouterKey}`,
+            "Authorization": `Bearer ${openrouterKey}`,
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-pro-exp-03-25:free",
+            // model: "google/gemini-2.5-pro-exp-03-25:free",
+            model: "mistralai/mistral-small-3.1-24b-instruct:free",
             messages: [
               {
                 role: "user",
@@ -124,6 +127,12 @@ const StatsScreen = () => {
 
       const data = await response.json();
       console.log("AI Feedback Response:", data);
+
+      if (response.status === 401) {
+        console.error("Error 401: Authentication failed");
+        setAiFeedback("Authentication failed. Please check your API key.");
+        return;
+      }
 
       if (response.status === 429) {
         console.error("Error 429: Prompt limit exceeded");
@@ -152,6 +161,10 @@ const StatsScreen = () => {
         setAiFeedback(
           "Sorry, the AI prompt limit has been exceeded. Please try again later."
         );
+      } else if (error.message && error.message.includes("401")) {
+        setAiFeedback("Authentication failed. Please check your API key.");
+      } else {
+        setAiFeedback("An error occurred while getting AI feedback.");
       }
     } finally {
       setIsLoading(false);
